@@ -1,11 +1,11 @@
 var CES = require('ces'),
     MongoClient = require('mongodb').MongoClient,
-    GameEngine = require('./engine'),
+    GameEngine = require('./src/engine'),
     _ = require('underscore'),
     mongo,
-    ComponentRegistry = require('./components');
+    ComponentRegistry = require('./src/components');
 
-var PhysicSystem = require('./systems/physics');
+var PhysicSystem = require('./src/systems/physics');
 
 var world = new CES.World();
 
