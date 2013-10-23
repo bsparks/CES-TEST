@@ -3,7 +3,7 @@ var CES = require('ces');
 var Component = CES.Component.extend({
     name: 'health',
     init: function (value) {
-        this.maxHealth = this.health = value;
+        this.maxHealth = this.health = value || 0;
     },
     isDead: function () {
         return this.health <= 0;

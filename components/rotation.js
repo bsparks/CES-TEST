@@ -1,7 +1,7 @@
 var CES = require('ces');
 
 var Component = CES.Component.extend({
-    name: 'velocity',
+    name: 'rotation',
     init: function (x, y, z) {
         this.x = x || 0;
         this.y = y || 0;

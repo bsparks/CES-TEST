@@ -4,14 +4,7 @@ var CES = require('ces'),
     GameEngine = require('./engine'),
     _ = require('underscore'),
     mongo,
-    ComponentRegistry = {};
-
-ComponentRegistry['position'] = require('./components/position');
-ComponentRegistry['velocity'] = require('./components/velocity');
-ComponentRegistry['health'] = require('./components/health');
-ComponentRegistry['path'] = require('./components/path');
-// markers designate ways to select groups of otherwise indistinguishables
-ComponentRegistry['waypoint_marker'] = require('./components/markers/waypoint');
+    ComponentRegistry = require('./components');
 
 var PhysicSystem = require('./systems/physics');
 
@@ -50,7 +43,7 @@ engine.loadWorld = function() {
             var entity = new CES.Entity();
             //console.log('data: ', data);
             _.each(data, function(value, key) {
-                console.log('key: ', key);
+                //console.log('key: ', key);
                 if(ComponentRegistry.hasOwnProperty(key)) {
                     var component = new ComponentRegistry[key]();
                     _.extend(component, value);
