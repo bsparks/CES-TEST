@@ -1,0 +1,20 @@
+{
+  "name": "CES_TEST",
+  "version": "0.0.1",
+  "description": "testin entity systems and mongo",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "ces"
+  ],
+  "author": "Ben Sparks",
+  "license": "WTFPL",
+  "dependencies": {
+    "mongodb": "~1.3.19",
+    "ces": "0.0.3",
+    "underscore": "~1.5.2"
+  }
+}
