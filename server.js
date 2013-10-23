@@ -1,4 +1,3 @@
-
 var CES = require('ces'),
     MongoClient = require('mongodb').MongoClient,
     GameEngine = require('./engine'),
@@ -15,8 +14,9 @@ world.addSystem(new PhysicSystem());
 
 var init = function() {
     var hero = new CES.Entity();
-    hero.addComponent(new Position(0, 0));
-    hero.addComponent(new Velocity(1, 2));
+    hero.addComponent(new Position(0, 0, 0));
+    hero.addComponent(new Velocity(1, 0, 1));
+    hero.addComponent(new Rotation(0, 0, 0));
     hero.addComponent(new Health(100));
 
     var waypoint = new CES.Entity();
@@ -44,7 +44,7 @@ engine.loadWorld = function() {
             //console.log('data: ', data);
             _.each(data, function(value, key) {
                 //console.log('key: ', key);
-                if(ComponentRegistry.hasOwnProperty(key)) {
+                if (ComponentRegistry.hasOwnProperty(key)) {
                     var component = new ComponentRegistry[key]();
                     _.extend(component, value);
                     entity.addComponent(component);
@@ -61,7 +61,7 @@ engine.saveWorld = function() {
 
     // this must be a snapshot, so clear previous
     collection.remove(function(err) {
-        if(err) {
+        if (err) {
             console.error('error during remove: ', err);
             return;
         }
@@ -75,7 +75,7 @@ engine.saveWorld = function() {
             });
 
             collection.insert(serialized, function(err, doc) {
-                if(err) {
+                if (err) {
                     console.error('Error inserting entity: ', err);
                 }
             });

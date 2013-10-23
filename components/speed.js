@@ -1,9 +1,9 @@
 var CES = require('ces');
 
 var Component = CES.Component.extend({
-    name: 'path',
-    init: function (points) {
-        this.points = points || [];
+    name: 'speed',
+    init: function (speed) {
+        this.speed = speed || 0;
     }
 });
 
