@@ -1,4 +1,5 @@
 var components = {
+    "tag": require('./tag'), // name is "reserved"
     "health": require('./health'),
     "armor": require('./armor'),
     "position": require('./position'),

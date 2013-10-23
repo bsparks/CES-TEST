@@ -17,7 +17,10 @@
     "ces": "0.0.3",
     "underscore": "~1.5.2",
     "nconf": "~0.6.7",
-    "express": "~3.4.3"
+    "express": "~3.4.3",
+    "cannon": "~0.5.0",
+    "three": "~0.58.10",
+    "q": "~0.9.7"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

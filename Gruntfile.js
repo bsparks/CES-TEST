@@ -7,7 +7,7 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
         cfg: require('./nconf'),
         jshint: {
-            files: ['src/**/*.js']
+            files: ['src/components/**/*.js', 'src/systems/**/*.js']
         }
     });
 

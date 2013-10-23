@@ -12,19 +12,21 @@ var world = new CES.World();
 // systems should be added in priority order
 world.addSystem(new PhysicSystem());
 
-var init = function() {
-    var hero = new CES.Entity();
-    hero.addComponent(new Position(0, 0, 0));
-    hero.addComponent(new Velocity(1, 0, 1));
-    hero.addComponent(new Rotation(0, 0, 0));
-    hero.addComponent(new Health(100));
+// spawn a creature type
+var spawn = function(name, position, rotation) {
+    position = position || {};
+    rotation = rotation || {};
 
-    var waypoint = new CES.Entity();
-    waypoint.addComponent(new Position(10, 5));
-    waypoint.addComponent(new Type('Waypoint'));
+    var entity = new CES.Entity();
+    entity.addComponent(new ComponentRegistry['tag'](name));
+    entity.addComponent(new ComponentRegistry['position'](position.x, position.y, position.z, position.zone));
+    entity.addComponent(new ComponentRegistry['velocity']());
+    entity.addComponent(new ComponentRegistry['rotation'](rotation.x, rotation.y, rotation.z));
+    entity.addComponent(new ComponentRegistry['speed']());
+    entity.addComponent(new ComponentRegistry['mass']());
+    entity.addComponent(new ComponentRegistry['health'](10));
 
-    world.addEntity(hero);
-    world.addEntity(waypoint);
+    world.addEntity(entity);
 };
 
 var engine = new GameEngine({
@@ -108,6 +110,7 @@ var startREPL = function() {
     serverREPL.context.engine = engine;
     serverREPL.context.db = mongo;
     serverREPL.context.cr = ComponentRegistry;
+    serverREPL.context.spawn = spawn;
 };
 
 
