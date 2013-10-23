@@ -6,61 +6,14 @@ var CES = require('ces'),
     mongo,
     ComponentRegistry = {};
 
-ComponentRegistry['position'] = CES.Component.extend({
-    name: 'position',
-    init: function (x, y) {
-        this.x = x;
-        this.y = y;
-    }
-});
-
-ComponentRegistry['velocity'] = CES.Component.extend({
-    name: 'velocity',
-    init: function (x, y) {
-        this.x = x;
-        this.y = y;
-    }
-});
-
-ComponentRegistry['health'] = CES.Component.extend({
-    name: 'health',
-    init: function (maxHealth) {
-        this.health = this.maxHealth = maxHealth;
-    },
-    isDead: function () {
-        return this.health <= 0;
-    },
-    receiveDamage: function (damage) {
-        this.health -= damage;
-    }
-});
-
+ComponentRegistry['position'] = require('./components/position');
+ComponentRegistry['velocity'] = require('./components/velocity');
+ComponentRegistry['health'] = require('./components/health');
+ComponentRegistry['path'] = require('./components/path');
 // markers designate ways to select groups of otherwise indistinguishables
-ComponentRegistry['WaypointMarker'] = CES.Component.extend({
-    name: 'WaypointMarker'
-});
+ComponentRegistry['waypoint_marker'] = require('./components/markers/waypoint');
 
-ComponentRegistry['path'] = CES.Component.extend({
-    name: 'path',
-    init: function(points) {
-        this.waypoints = points;
-    }
-});
-
-var PhysicSystem = CES.System.extend({
-    update: function (dt) {
-        var entities, position, velocity;
-
-        entities = this.world.getEntities('position', 'velocity');
-
-        entities.forEach(function (entity) {
-            position = entity.getComponent('position');
-            velocity = entity.getComponent('velocity');
-            position.x += velocity.x * dt;
-            position.y += velocity.y * dt;
-        });
-    }
-});
+var PhysicSystem = require('./systems/physics');
 
 var world = new CES.World();
 
