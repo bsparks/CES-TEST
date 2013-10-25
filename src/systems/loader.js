@@ -29,6 +29,10 @@ var System = CES.System.extend({
                 entity.addComponent(new ComponentRegistry.mesh(mesh));
 
                 system.scene.add(mesh);
+
+                // for now remove the texture and geometry components to get out of this system
+                entity.removeComponent('texture');
+                entity.removeComponent('geometry');
             }
         });
     }

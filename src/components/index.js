@@ -5,6 +5,7 @@ var components = {
     "position": require('./position'),
     "rotation": require('./rotation'),
     "velocity": require('./velocity'),
+    "angularVelocity": require('./angularVelocity'),
     "speed": require('./speed'),
     "mass": require('./mass'),
     "path": require('./path'),
