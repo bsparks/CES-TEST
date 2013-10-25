@@ -8,6 +8,9 @@ var components = {
     "speed": require('./speed'),
     "mass": require('./mass'),
     "path": require('./path'),
+    "texture": require('./texture'),
+    "geometry": require('./geometry'),
+    "mesh": require('./mesh'),
     "waypoint_marker": require('./markers/waypoint')
 };
 

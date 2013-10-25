@@ -1,140 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>CES - Test</title>
+    <meta charset="utf-8">
+    <title>CES GAME</title>
 
-    <script src="http://code.jquery.com/jquery-2.0.0.min.js"></script>
-    <script src="ces-browser.min.js"></script>
+    <base href="@@root/" />
+
+    <script src="lib/three.@@minjs"></script>
+    <script src="js/game@@min.js"></script>
+
+    <script src="/socket.io/socket.io.js"></script>
 
 </head>
 <body>
-    <h1>Test</h1>
-    <div id="time"></div>
-    <canvas id="canvas" width="300" height="300"></canvas>
 
-    <script type="text/javascript" defer="defer">
-        var Draw = CES.Component.extend({
-            name: 'draw',
-            draw: function() {},
-            init: function(options) {
-                $.extend(this, options);
-            }
-        });
-
-        var Position = CES.Component.extend({
-            name: 'position',
-            init: function (x, y) {
-                this.x = x;
-                this.y = y;
-            }
-        });
-
-        var Velocity = CES.Component.extend({
-            name: 'velocity',
-            init: function (x, y) {
-                this.x = x;
-                this.y = y;
-            }
-        });
-
-        var Health = CES.Component.extend({
-            name: 'health',
-            init: function (maxHealth) {
-                this.health = this.maxHealth = maxHealth;
-            },
-            isDead: function () {
-                return this.health <= 0;
-            },
-            receiveDamage: function (damage) {
-                this.health -= damage;
-            }
-        });
-
-        var PhysicSystem = CES.System.extend({
-            update: function (dt) {
-                var entities, position, velocity;
-
-                entities = this.world.getEntities('position', 'velocity');
-
-                entities.forEach(function (entity) {
-                    position = entity.getComponent('position');
-                    velocity = entity.getComponent('velocity');
-                    position.x += velocity.x * dt;
-                    position.y += velocity.y * dt;
-                });
-            }
-        });
-
-        var RenderSystem = CES.System.extend({
-            init: function (el) {
-                this._canvas = el;
-                this._context = el.getContext('2d');
-            },
-            update: function (dt) {
-                // clear screen
-                this._context.fillStyle = '#000';
-                this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
-
-                var entities;
-
-                entities = this.world.getEntities('draw');
-
-                entities.forEach(function (entity) {
-                    entity.getComponent('draw').draw(this._context);
-                });
-            }
-        });
-
-        var world = new CES.World();
-
-        var tick = function(time) {
-            //document.getElementById('time').innerHTML = JSON.stringify(time, true);
-            world.update(time.frameTime);
-        };
-
-        var run = function(element) {
-            var startTime = performance.now();
-            var lastTimestamp = startTime;
-            var lastFps = startTime;
-
-            var frame = function() {
-                var timestamp = performance.now();
-
-                requestAnimationFrame(frame, element);
-
-                tick({
-                    timestamp: timestamp,
-                    elapsed: timestamp - startTime,
-                    frameTime: Math.min(timestamp - lastTimestamp, 40),
-                });
-
-                lastTimestamp = timestamp;
-            };
-            requestAnimationFrame(frame, element);
-        };
-
-        function init() {
-            var canvas = document.getElementById('canvas');
-
-            var hero = new CES.Entity();
-            hero.addComponent(new Position(0, 0));
-            hero.addComponent(new Velocity(0, 0));
-            hero.addComponent(new Health(100));
-            hero.addComponent(new Draw({draw: function(ctx) { ctx.fillStyle='red';ctx.fillRect(0,0,10,10); }}));
-
-            world.addEntity(hero);
-            // ... add other entities
-
-            world.addSystem(new PhysicSystem());
-            world.addSystem(new RenderSystem(canvas));
-            // ... add other systems
-
-            // ok - start
-            run(canvas);
-        }
-
-        document.addEventListener("DOMContentLoaded", init);
-
-    </script>
 </body>
 </html>

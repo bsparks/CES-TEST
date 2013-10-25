@@ -1,4 +1,5 @@
 var CES = require('ces'),
+    config = require('./nconf'),
     MongoClient = require('mongodb').MongoClient,
     GameEngine = require('./src/engine'),
     _ = require('underscore'),
@@ -127,3 +128,18 @@ MongoClient.connect('mongodb://127.0.0.1:27017/ironbane', function(err, db) {
 process.on('exit', function() {
     mongo.close();
 });
+
+var express = require('express.io');
+var app = express().http().io();
+
+app.use('/js', express.static(__dirname + '/' + config.get('buildTarget') + '/game/js'));
+app.use('/lib', express.static(__dirname + '/' + config.get('buildTarget') + '/game/lib'));
+app.use('/media', express.static(__dirname + '/' + config.get('buildTarget') + '/game/media'));
+app.use(app.router);
+
+// Send client html.
+app.get('/', function(req, res) {
+    res.sendfile(__dirname + '/' + config.get('buildTarget') + '/game/index.html');
+});
+
+app.listen(config.get('server_port'));

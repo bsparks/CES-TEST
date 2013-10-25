@@ -19,8 +19,9 @@
     "nconf": "~0.6.7",
     "express": "~3.4.3",
     "cannon": "~0.5.0",
-    "three": "~0.58.10",
-    "q": "~0.9.7"
+    "three": ">=0.58",
+    "q": "~0.9.7",
+    "express.io": "~1.1.13"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
@@ -33,6 +34,8 @@
     "grunt-contrib-copy": "~0.4.1",
     "grunt-replace": "~0.5.1",
     "grunt-contrib-watch": "~0.4.3",
-    "grunt-beep": "~0.3.0"
+    "grunt-beep": "~0.3.0",
+    "browserify": "~2.35.0",
+    "grunt-browserify": "~1.2.9"
   }
 }
