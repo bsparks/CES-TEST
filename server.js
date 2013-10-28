@@ -4,7 +4,8 @@ var CES = require('ces'),
     GameEngine = require('./src/engine'),
     _ = require('underscore'),
     mongo,
-    ComponentRegistry = require('./src/components');
+    ComponentRegistry = require('./src/components'),
+    SystemRegistry = require('./src/systems');
 
 var PhysicSystem = require('./src/systems/physics');
 
@@ -37,6 +38,25 @@ var engine = new GameEngine({
 engine.on('tick', function(delta) {
     this.world.update(delta);
 });
+
+// get JUST the components for all entities (for network transmission)
+engine.getRawEntities = function() {
+    var ents = engine.world.getEntities();
+    var raw = _.map(ents, function(entity) {
+        var components = {};
+
+        _.each(entity._components, function(component) {
+            components[component.name] = {};
+            _.each(component, function(value, key) {
+                components[component.name][key] = value;
+            });
+        });
+
+        return components;
+    });
+
+    return raw;
+};
 
 engine.loadWorld = function() {
     var collection = mongo.collection('entities');
@@ -86,6 +106,26 @@ engine.saveWorld = function() {
     });
 };
 
+// temp
+engine.createCube = function(x, y, z) {
+    x = x || 0;
+    y = y || 0;
+    z = z || 0;
+
+    var entity = new CES.Entity();
+    entity.addComponent(new ComponentRegistry['position'](x, y, z));
+    entity.addComponent(new ComponentRegistry['rotation']());
+    entity.addComponent(new ComponentRegistry['velocity']());
+    entity.addComponent(new ComponentRegistry['angularVelocity']());
+    entity.addComponent(new ComponentRegistry['texture']('media/images/crate.gif'));
+    entity.addComponent(new ComponentRegistry['geometry']());
+    entity.addComponent(new ComponentRegistry['ghostable'](true));
+
+    this.world.addEntity(entity);
+
+    return entity; // temp hack for debug
+};
+
 // setup REPL for console server mgmt
 var startREPL = function() {
     var repl = require('repl'),
@@ -111,7 +151,7 @@ var startREPL = function() {
     serverREPL.context.engine = engine;
     serverREPL.context.db = mongo;
     serverREPL.context.cr = ComponentRegistry;
-    serverREPL.context.spawn = spawn;
+    serverREPL.context.sr = SystemRegistry;
 };
 
 
@@ -137,9 +177,18 @@ app.use('/lib', express.static(__dirname + '/' + config.get('buildTarget') + '/g
 app.use('/media', express.static(__dirname + '/' + config.get('buildTarget') + '/game/media'));
 app.use(app.router);
 
+app.io.route('ready', function(req) {
+    /*req.io.emit('entities', {
+        entities: engine.getRawEntities()
+    });*/
+});
+
 // Send client html.
 app.get('/', function(req, res) {
     res.sendfile(__dirname + '/' + config.get('buildTarget') + '/game/index.html');
 });
 
 app.listen(config.get('server_port'));
+
+// do this here for now
+engine.world.addSystem(new SystemRegistry['ghostManager'](app.io, true));

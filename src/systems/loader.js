@@ -19,6 +19,11 @@ var System = CES.System.extend({
             texture = entity.getComponent('texture');
             geometry = entity.getComponent('geometry');
 
+            if(!geometry.geometry) {
+                // need to load geometry (came from server most likely)
+                geometry.geometry = new THREE.CubeGeometry(200, 200, 200); // TODO: some sort of factory method!
+            }
+
             if (texture.texture === null) {
                 texture.texture = THREE.ImageUtils.loadTexture(texture.path);
 
