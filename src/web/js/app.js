@@ -2,8 +2,11 @@ CES = require('ces');
 ComponentRegistry = require('../../components');
 SystemsRegistry = require('../../systems');
 _ = require('underscore');
+Tree = require('./tree');
 
 var $window = window; // just for some angular compat..
+
+$window.Tree = Tree; // temp
 
 var lastTime = 0;
 var loop = function(game) {
@@ -18,6 +21,8 @@ var loop = function(game) {
 
     lastTime = currentTime;
 };
+
+PointerLockControls = require('./pointerLockControls.js');
 
 Game = CES.Class.extend({
     init: function() {
@@ -57,12 +62,27 @@ Game = CES.Class.extend({
         document.body.appendChild(self.renderer.domElement);
 
         self.camera = new THREE.PerspectiveCamera(70, $window.innerWidth / $window.innerHeight, 1, 1000);
-        self.camera.position.z = 400;
+        //self.camera.position.z = 400;
+
+        self.controls = new PointerLockControls(self.camera);
+
+        self.ray = new THREE.Raycaster();
+        self.ray.ray.direction.set( 0, -1, 0 );
+
         self.scene = new THREE.Scene();
+        self.scene.add(self.controls.getObject());
+
+        var ambient = new THREE.AmbientLight( 0xffffff );
+        self.scene.add( ambient );
+
+        self.renderer.setClearColor(0x92aafd, 1);
 
         self.world.addSystem(new SystemsRegistry['loader'](self.scene));
         self.world.addSystem(new SystemsRegistry['physics']());
         self.world.addSystem(ghostManager);
+
+        self.dgen = new SystemsRegistry['dungeonGen']();
+        self.world.addSystem(self.dgen);
 
         window.addEventListener('resize', function() {
             self.onWindowResize();
@@ -104,7 +124,20 @@ Game = CES.Class.extend({
 
         return entity; // temp hack for debug
     },
+    createTower: function() {
+        var self = this;
+        var loader = new THREE.JSONLoader();
+        loader.load('/media/meshes/guard_tower/guard_tower.js', function(geometry, materials) {
+            var texture = THREE.ImageUtils.loadTexture('/media/meshes/guard_tower/guard_tower_col_512.png');
+            console.log('loaded json', geometry, texture, materials);
+
+            var mesh = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial( materials ) );
+            self.scene.add(mesh);
+        });
+    },
     update: function(dt) {
+        this.controls.update(dt);
+
         this.world.update(dt);
 
         this.renderer.clear();

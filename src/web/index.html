@@ -1,18 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <title>CES GAME</title>
 
     <base href="@@root/" />
 
+    <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+    <script src="lib/game-shim.js"></script>
     <script src="lib/three.@@minjs"></script>
     <script src="js/game@@min.js"></script>
 
     <script src="/socket.io/socket.io.js"></script>
 
 </head>
-<body>
 
+<body>
+    <canvas id="map" width="512" height="512" style="position:absolute;top:20px;left:20px;background-color:black;"></canvas>
+    <script>
+    $(document).ready(function() {
+        game = new Game();
+        game.start();
+
+        game.go = function(seed) {
+            var ctx = $('#map')[0].getContext('2d');
+            var map = game.dgen.generate(64, 64, seed);
+            game.dgen.draw(ctx, 512 / 64, map);
+
+            var map3d = game.scene.getObjectByName('map3d');
+            if(map3d) {
+                game.scene.remove(map3d);
+            }
+
+            var geometry = new THREE.CubeGeometry( 20, 20, 20 );
+            var texture = THREE.ImageUtils.loadTexture( 'media/images/crate.gif' );
+            texture.anisotropy = game.renderer.getMaxAnisotropy();
+            var material = new THREE.MeshBasicMaterial( { map: texture } );
+            var mesh = new THREE.Mesh( geometry, material );
+
+            var floorTex = THREE.ImageUtils.loadTexture('media/images/ground_01_1.png');
+            floorTex.anisotropy = game.renderer.getMaxAnisotropy();
+            var floorGeo = new THREE.PlaneGeometry(20, 20);
+            floorGeo.applyMatrix( new THREE.Matrix4().makeRotationX( - Math.PI / 2 ) );
+            var floorMesh = new THREE.Mesh(floorGeo, new THREE.MeshBasicMaterial( { map: floorTex } ));
+
+            map3d = new THREE.Object3D();
+            map3d.name = 'map3d';
+
+            var grid = map.getComponent('grid');
+            grid.cells.forEach(function(cell, index) {
+                var pos = grid.getCoords(index);
+
+                if(cell === 1) {
+                    var floor = floorMesh.clone();
+                    floor.position.set(pos.x * 20, 0, pos.y * 20);
+                    map3d.add(floor);
+                }
+                if(cell === 2) {
+                    var wall = mesh.clone();
+                    wall.position.set(pos.x * 20, 10, pos.y * 20);
+                    map3d.add(wall);
+                }
+            });
+
+            game.scene.add(map3d);
+        }
+
+        /*
+        var myTree = new Tree({
+            "seed": 262,
+            "segments": 6,
+            "levels": 5,
+            "vMultiplier": 2.36,
+            "twigScale": 0.39,
+            "initalBranchLength": 0.49,
+            "lengthFalloffFactor": 0.85,
+            "lengthFalloffPower": 0.99,
+            "clumpMax": 0.454,
+            "clumpMin": 0.404,
+            "branchFactor": 2.45,
+            "dropAmount": -0.1,
+            "growAmount": 0.235,
+            "sweepAmount": 0.01,
+            "maxRadius": 0.139,
+            "climbRate": 0.371,
+            "trunkKink": 0.093,
+            "treeSteps": 5,
+            "taperRate": 0.947,
+            "radiusFalloffRate": 0.73,
+            "twistRate": 3.02,
+            "trunkLength": 2.4
+        });
+
+        var loader = new THREE.JSONLoader();
+        var json = myTree.toTHREE();
+        var trunk = new THREE.Mesh(loader.parse(json.tree).geometry);
+        var twigs = new THREE.Mesh(loader.parse(json.twigs).geometry);
+
+        game.scene.add(twigs);
+        game.scene.add(trunk);*/
+
+        $('body').on('keydown', function(e) {
+            if(e.keyCode === 13) {
+                this.requestFullScreen();
+            }
+        });
+
+        $(document).on('fullscreenchange', function(e) {
+            game.controls.enable = true;
+            $('body')[0].requestPointerLock();
+        });
+    });
+    </script>
 </body>
+
 </html>

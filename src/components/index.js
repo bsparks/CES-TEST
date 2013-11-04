@@ -13,7 +13,9 @@ var components = {
     "geometry": require('./geometry'),
     "mesh": require('./mesh'),
     "waypoint_marker": require('./markers/waypoint'),
-    "ghostable": require('./ghostable')
+    "ghostable": require('./ghostable'),
+    "grid": require('./grid'),
+    "mapping/dungeon": require('./mapping/dungeon')
 };
 
 module.exports = components;
