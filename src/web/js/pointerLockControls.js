@@ -150,12 +150,12 @@ PointerLockControls = function(camera) {
             return;
         }
 
-        delta *= 0.1;
+        //delta *= 0.1;
 
         velocity.x += (-velocity.x) * 0.08 * delta;
         velocity.z += (-velocity.z) * 0.08 * delta;
 
-        velocity.y -= 0.25 * delta;
+        velocity.y -= 1.25 * delta;
 
         if (moveForward) {
             velocity.z -= 0.12 * delta;
